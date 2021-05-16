@@ -1,7 +1,7 @@
 from math import sqrt, log
 from copy import deepcopy
 from random import choice, random
-from time import clock
+import timeit
 
 from gamestate import GameState
 from uct_mcstsagent import Node, UctMctsAgent
@@ -82,17 +82,17 @@ class RaveMctsAgent(UctMctsAgent):
         """
         Search and update the search tree for a specified amount of time in secounds.
         """
-        start_time = clock()
+        start_time = time.perf_counter()
         num_rollouts = 0
 
         # do until we exceed our time budget
-        while clock() - start_time < time_budget:
+        while time.perf_counter()() - start_time < time_budget:
             node, state = self.select_node()
             turn = state.turn()
             outcome, black_rave_pts, white_rave_pts = self.roll_out(state)
             self.backup(node, turn, outcome, black_rave_pts, white_rave_pts)
             num_rollouts += 1
-        run_time = clock() - start_time
+        run_time = time.perf_counter() - start_time
         node_count = self.tree_size()
         self.run_time = run_time
         self.node_count = node_count
